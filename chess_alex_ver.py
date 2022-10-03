@@ -31,12 +31,15 @@ class Rook:
         else:
             return f"\033[2;37;40m[   ♖   ]\033[0;0m"
 
+    def threatened_spaces(self):
+        pass
+
     def movement(self):
-        moves=[]
-        lateral_1=self.lateral_movement_1()
-        lateral_2=self.lateral_movement_2()
-        upwards=self.upwards_movement()
-        downwards=self.downwards_movement()
+        moves = []
+        lateral_1 = self.lateral_movement_1()
+        lateral_2 = self.lateral_movement_2()
+        upwards = self.upwards_movement()
+        downwards = self.downwards_movement()
         for i in lateral_1:
             moves.append(i)
         for i in lateral_2:
@@ -46,55 +49,59 @@ class Rook:
         for i in downwards:
             moves.append(i)
         return moves
+
     def lateral_movement_1(self):
-        available_spaces=[]
-        abc="abcdefgh"
-        x,y=self.tile.coords
-        i=True
-        wanted_x=abc.index(x)+1
+
+        available_spaces = []
+        abc = "abcdefgh"
+        x, y = self.tile.coords
+        i = True
+        wanted_x = abc.index(x) + 1
         if wanted_x == 8:
-            i=False
+            i = False
         while i:
-            new_tile=Tile.tiles[abc[wanted_x],y]
+            new_tile = Tile.tiles[abc[wanted_x], y]
             if new_tile.occupied:
-                if new_tile.team==self.team:
-                    i=False
+                if new_tile.team == self.team:
+                    i = False
                 else:
                     available_spaces.append(new_tile)
-                    i=False
+                    i = False
             else:
                 available_spaces.append(new_tile)
-                wanted_x+=1
+                wanted_x += 1
             if wanted_x > 8:
                 i = False
         return available_spaces
+
     def lateral_movement_2(self):
-        available_spaces=[]
-        abc="abcdefgh"
-        x,y=self.tile.coords
-        i=True
-        wanted_x=abc.index(x)-1
+        available_spaces = []
+        abc = "abcdefgh"
+        x, y = self.tile.coords
+        i = True
+        wanted_x = abc.index(x) - 1
         if wanted_x == -1:
             i = False
         while i:
-            new_tile=Tile.tiles[abc[wanted_x],y]
+            new_tile = Tile.tiles[abc[wanted_x], y]
             if new_tile.occupied:
-                if new_tile.team==self.team:
-                    i=False
+                if new_tile.team == self.team:
+                    i = False
                 else:
                     available_spaces.append(new_tile)
-                    i=False
+                    i = False
             else:
                 available_spaces.append(new_tile)
-                wanted_x-=1
+                wanted_x -= 1
             if wanted_x < 0:
                 i = False
         return available_spaces
+
     def upwards_movement(self):
         available_spaces = []
         x, y = self.tile.coords
         i = True
-        wanted_y= y+1
+        wanted_y = y + 1
         if wanted_y == 9:
             i = False
         while i:
@@ -105,17 +112,18 @@ class Rook:
                 else:
                     available_spaces.append(new_tile)
                     i = False
-            elif new_tile.occupied==False:
+            elif new_tile.occupied == False:
                 available_spaces.append(new_tile)
                 wanted_y += 1
             if wanted_y > 8:
-                i=False
+                i = False
         return available_spaces
+
     def downwards_movement(self):
         available_spaces = []
         x, y = self.tile.coords
         i = True
-        wanted_y= y-1
+        wanted_y = y - 1
         if wanted_y == 0:
             i = False
         while i:
@@ -126,13 +134,12 @@ class Rook:
                 else:
                     available_spaces.append(new_tile)
                     i = False
-            elif new_tile.occupied==False:
+            elif new_tile.occupied == False:
                 available_spaces.append(new_tile)
                 wanted_y -= 1
                 if wanted_y < 1:
                     i = False
         return available_spaces
-
 
 
 class Knight:
@@ -341,11 +348,11 @@ class Queen:
             return f"\033[2;37;40m[   ♕   ]\033[0;0m"
 
     def straight_movement(self):
-        moves=[]
-        lateral_1=self.lateral_movement_1()
-        lateral_2=self.lateral_movement_2()
-        upwards=self.upwards_movement()
-        downwards=self.downwards_movement()
+        moves = []
+        lateral_1 = self.lateral_movement_1()
+        lateral_2 = self.lateral_movement_2()
+        upwards = self.upwards_movement()
+        downwards = self.downwards_movement()
         for i in lateral_1:
             moves.append(i)
         for i in lateral_2:
@@ -355,55 +362,58 @@ class Queen:
         for i in downwards:
             moves.append(i)
         return moves
+
     def lateral_movement_1(self):
-        available_spaces=[]
-        abc="abcdefgh"
-        x,y=self.tile.coords
-        i=True
-        wanted_x=abc.index(x)+1
+        available_spaces = []
+        abc = "abcdefgh"
+        x, y = self.tile.coords
+        i = True
+        wanted_x = abc.index(x) + 1
         if wanted_x == 8:
-            i=False
+            i = False
         while i:
-            new_tile=Tile.tiles[abc[wanted_x],y]
+            new_tile = Tile.tiles[abc[wanted_x], y]
             if new_tile.occupied:
-                if new_tile.team==self.team:
-                    i=False
+                if new_tile.team == self.team:
+                    i = False
                 else:
                     available_spaces.append(new_tile)
-                    i=False
+                    i = False
             else:
                 available_spaces.append(new_tile)
-                wanted_x+=1
+                wanted_x += 1
             if wanted_x > 8:
                 i = False
         return available_spaces
+
     def lateral_movement_2(self):
-        available_spaces=[]
-        abc="abcdefgh"
-        x,y=self.tile.coords
-        i=True
-        wanted_x=abc.index(x)-1
+        available_spaces = []
+        abc = "abcdefgh"
+        x, y = self.tile.coords
+        i = True
+        wanted_x = abc.index(x) - 1
         if wanted_x == -1:
             i = False
         while i:
-            new_tile=Tile.tiles[abc[wanted_x],y]
+            new_tile = Tile.tiles[abc[wanted_x], y]
             if new_tile.occupied:
-                if new_tile.team==self.team:
-                    i=False
+                if new_tile.team == self.team:
+                    i = False
                 else:
                     available_spaces.append(new_tile)
-                    i=False
+                    i = False
             else:
                 available_spaces.append(new_tile)
-                wanted_x-=1
+                wanted_x -= 1
             if wanted_x < 0:
                 i = False
         return available_spaces
+
     def upwards_movement(self):
         available_spaces = []
         x, y = self.tile.coords
         i = True
-        wanted_y= y+1
+        wanted_y = y + 1
         if wanted_y == 9:
             i = False
         while i:
@@ -414,17 +424,18 @@ class Queen:
                 else:
                     available_spaces.append(new_tile)
                     i = False
-            elif new_tile.occupied==False:
+            elif new_tile.occupied == False:
                 available_spaces.append(new_tile)
                 wanted_y += 1
             if wanted_y > 8:
-                i=False
+                i = False
         return available_spaces
+
     def downwards_movement(self):
         available_spaces = []
         x, y = self.tile.coords
         i = True
-        wanted_y= y-1
+        wanted_y = y - 1
         if wanted_y == 0:
             i = False
         while i:
@@ -435,13 +446,12 @@ class Queen:
                 else:
                     available_spaces.append(new_tile)
                     i = False
-            elif new_tile.occupied==False:
+            elif new_tile.occupied == False:
                 available_spaces.append(new_tile)
                 wanted_y -= 1
                 if wanted_y < 1:
                     i = False
         return available_spaces
-
 
     def diagonal_movement(self):
         abc = "0abcdefgh"
@@ -584,11 +594,11 @@ class Board:
             board = board + f"\n{row}"
         return board
 
-    def threatened_spaces(self,color):
-        threats=[]
+    def threatened_spaces(self, color):
+        threats = []
         for row in Board.board:
             for tile in row:
-                if tile.team==color:
+                if tile.team == color:
                     pass
 
 
@@ -619,20 +629,6 @@ knight1b = Knight(Board.board[0][1], "black", 1)
 knight2b = Knight(Board.board[0][6], "black", 1)
 bishop1b = Bishop(Board.board[4][6], "black", 1)
 bishop2b = Bishop(Board.board[0][5], "black", 1)
+
 print(board1)
 print(queenw.movement())
-# print(bishop2b.available_spaces())
-# pawn1 = Pawn(Board.board[5][4], "white", 1)
-# pawn2 = Pawn(Board.board[6][2], "white", 1)
-# pawn3 = Pawn(Board.board[5][3], "black", 1)
-# pawn4 = Pawn(Board.board[4][2], "black", 1)
-# rook1 = Rook(Board.board[4][4], "white", 1)
-# pawn5 = Pawn(Board.board[4][7], "white", 1)
-# rook2 = Rook(Board.board[2][4], "black", 1)
-# knight1 = Knight(Board.board[1][2], "black", 1)
-# bishop1 = Bishop(Board.board[4][6], "white", 1)
-# print(pawn1.available_spaces())
-# print(knight1.cleanse())
-# print(pawn2.available_spaces())
-# print(bishop1.available_spaces())
-
