@@ -5,6 +5,7 @@ from typing import List, Set, Dict
 class Tile:
     piece: object = None
     tiles: Dict[tuple, Tile] = {}
+    tag: str = None
 
     def __init__(self, x_coordinate: str, y_coordinate: int, team: any, occupied: bool):
         self.coords = (x_coordinate, y_coordinate)
@@ -24,6 +25,8 @@ class Rook:
         tile.occupied = True
         tile.team = team
         tile.piece = self
+        self.tag = f"r{number}"
+        tile.tag = self.tag
 
     def __repr__(self):
         if self.team == "white":
@@ -44,8 +47,23 @@ class Rook:
         return moves
 
     def movement(self) -> list:
-        return [x for x in self.threatened_spaces() if x.team!=self.team]
-        
+        return [x for x in self.threatened_spaces() if x.team != self.team]
+
+    def eat_or_move(self, new_tile):
+        if new_tile in self.movement():
+            self.tile.team = None
+            self.tile.occupied = False
+            self.tile.piece = None
+            self.tile.tag=None
+            new_tile.piece.tile = None
+            new_tile.piece = self
+            new_tile.team = self.team
+            new_tile.occupied = True
+            new_tile.tag=self.tag
+
+        else:
+            print(f"{self.tag} can't move towards {new_tile.coords} tile")
+
     def lateral_movement_1(self) -> list:
 
         available_spaces = []
@@ -134,6 +152,8 @@ class Knight:
         tile.occupied = True
         tile.team = team
         tile.piece = self
+        self.tag = f"n{number}"
+        tile.tag = self.tag
 
     def __repr__(self):
         if self.team == "white":
@@ -165,6 +185,20 @@ class Knight:
                 actually_available_space.remove(tile)
         return actually_available_space
 
+    def eat_or_move(self, new_tile):
+        if new_tile in self.movement():
+            self.tile.team = None
+            self.tile.occupied = False
+            self.tile.piece = None
+            self.tile.tag =None
+            new_tile.piece.tile = None
+            new_tile.piece = self
+            new_tile.team = self.team
+            new_tile.occupied = True
+            new_tile.tag=self.tag
+        else:
+            print(f"{self.tag} can't move towards {new_tile.coords} tile")
+
 
 class Pawn:
 
@@ -175,6 +209,8 @@ class Pawn:
         tile.occupied = True
         tile.team = team
         tile.piece = self
+        self.tag = f"p{number}"
+        tile.tag = self.tag
 
     def __repr__(self) -> str:
         if self.team == "white":
@@ -231,6 +267,20 @@ class Pawn:
 
         return available_spaces if available_spaces != set() else "No available spaces"
 
+    def eat_or_move(self, new_tile):
+        if new_tile in self.movement():
+            self.tile.team = None
+            self.tile.occupied = False
+            self.tile.piece = None
+            self.tile.tag=None
+            new_tile.piece.tile = None
+            new_tile.piece = self
+            new_tile.team = self.team
+            new_tile.occupied = True
+            new_tile.tag=self.tag
+        else:
+            print(f"{self.tag} can't move towards {new_tile.coords} tile")
+
 
 class Bishop:
 
@@ -241,6 +291,8 @@ class Bishop:
         tile.occupied = True
         tile.team = team
         tile.piece = self
+        self.tag = f"b{number}"
+        tile.tag = self.tag
 
     def __repr__(self) -> str:
         if self.team == "white":
@@ -362,6 +414,19 @@ class Bishop:
             available_spaces.append(tile)
             return self.r_bot_axis(x + 1, y - 1, available_spaces)
 
+    def eat_or_move(self, new_tile):
+        if new_tile in self.movement():
+            self.tile.team = None
+            self.tile.occupied = False
+            self.tile.piece = None
+            self.tile.tag=None
+            new_tile.piece.tile = None
+            new_tile.piece = self
+            new_tile.team = self.team
+            new_tile.occupied = True
+            new_tile.tag=self.tag
+        else:
+            print(f"{self.tag} can't move towards {new_tile.coords} tile")
 
 class Queen:
 
@@ -372,6 +437,8 @@ class Queen:
         tile.occupied = True
         tile.team = team
         tile.piece = self
+        self.tag = f"q "
+        tile.tag = self.tag
 
     def __repr__(self):
         if self.team == "white":
@@ -591,6 +658,20 @@ class Queen:
     def movement(self):
         return [x for x in self.threatened_spaces() if x.team != self.team]
 
+    def eat_or_move(self, new_tile):
+        if new_tile in self.movement():
+            self.tile.team = None
+            self.tile.occupied = False
+            self.tile.piece = None
+            self.tile.tag=None
+            new_tile.piece.tile = None
+            new_tile.piece = self
+            new_tile.team = self.team
+            new_tile.occupied = True
+            new_tile.tag=self.tag
+        else:
+            print(f"{self.tag} can't move towards {new_tile.coords} tile")
+
 
 class King:
 
@@ -602,6 +683,8 @@ class King:
         tile.team = team
         tile.piece = self
         self.check = False
+        self.tag = "k"
+        tile.tag = self.tag
 
     def __repr__(self):
         if self.team == "white":
@@ -641,6 +724,20 @@ class King:
         if self.tile in threatened:
             self.check = True
 
+    def eat_or_move(self, new_tile):
+        if new_tile in self.movement():
+            self.tile.team = None
+            self.tile.occupied = False
+            self.tile.piece = None
+            self.tile.tag=None
+            new_tile.piece.tile = None
+            new_tile.piece = self
+            new_tile.team = self.team
+            new_tile.occupied = True
+            new_tile.tag=self.tag
+        else:
+            print(f"{self.tag} can't move towards {new_tile.coords} tile")
+
 
 class Board:
     board: List[List[object]] = [[], [], [], [], [], [], [], []]
@@ -661,6 +758,25 @@ class Board:
         return board
 
     @staticmethod
+    def play():
+        color = "white"
+        check_mate = False
+        while not check_mate:
+            letter, number, to, x, y = tuple(input(f"{color} move:"))
+            place = Tile.tiles[(x, int(y))]
+            for tile in Tile.tiles:
+                this_tile = Tile.tiles[tile]
+                piece = Tile.tiles[tile].piece
+                if f"{letter}{number}" == this_tile.tag and this_tile.team == color:
+                    print("entro en el if")
+                    piece.eat_or_move(place)
+                    print(Board.board)
+                    if color == "white":
+                        color = "black"
+                    else:
+                        color = "white"
+
+    @staticmethod
     def threatened_space(color):
         threats = []
         for row in Board.board:
@@ -677,44 +793,57 @@ class Board:
         # deberiamos de guardar en algun lado que pieza en particular esta poniendo en jaque al rey, así podemos
         # hacer que se pueda salir de jaques no solo moviendo al rey si no que tambien bloqueando a la pieza que
         # esta poniendo en jaque. Entonces lo que hariamos es que si el King.check == True, available spaces de las
-        # piezas fuera interseccion con la pieza que esta poniendo en jaque, y nada más. Despues tendriamos tmb que
+        # piezas fuera interseccion con la pieza que esta poniendo en jaque, y nada más.
 
 
 board1 = Board()
-pawn1w = Pawn(Board.board[6][0], "white", 1)
-pawn2w = Pawn(Board.board[4][0], "white", 1)
-pawn3w = Pawn(Board.board[6][2], "white", 1)
-pawn4w = Pawn(Board.board[6][3], "white", 1)
-pawn5w = Pawn(Board.board[6][4], "white", 1)
-pawn6w = Pawn(Board.board[6][5], "white", 1)
-pawn7w = Pawn(Board.board[6][6], "white", 1)
-pawn8w = Pawn(Board.board[6][7], "white", 1)
-rook1w = Rook(Board.board[3][4], "white", 1)
-rook2w = Rook(Board.board[7][7], "white", 1)
+# pawn1w = Pawn(Board.board[6][0], "white", 1)
+# pawn2w = Pawn(Board.board[4][0], "white", 1)
+# pawn3w = Pawn(Board.board[6][2], "white", 1)
+# pawn4w = Pawn(Board.board[6][3], "white", 1)
+# pawn5w = Pawn(Board.board[6][4], "white", 1)
+# pawn6w = Pawn(Board.board[6][5], "white", 1)
+# pawn7w = Pawn(Board.board[6][6], "white", 1)
+# pawn8w = Pawn(Board.board[6][7], "white", 1)
+# rook1w = Rook(Board.board[3][4], "white", 1)
+# rook2w = Rook(Board.board[7][7], "white", 1)
 knight1w = Knight(Board.board[7][1], "white", 1)
-knight2w = Knight(Board.board[7][6], "white", 1)
-bishop1w = Bishop(Board.board[3][3], "white", 1)
-bishop2w = Bishop(Board.board[7][5], "white", 1)
-queenw = Queen(Board.board[7][3], "white", 1)
-pawn1b = Pawn(Board.board[1][0], "black", 1)
-pawn2b = Pawn(Board.board[1][2], "black", 1)
-pawn4b = Pawn(Board.board[1][3], "black", 1)
-pawn6b = Pawn(Board.board[1][5], "black", 1)
-pawn7b = Pawn(Board.board[1][6], "black", 1)
-pawn8b = Pawn(Board.board[1][7], "black", 1)
-rook1b = Rook(Board.board[0][0], "black", 1)
-rook2b = Rook(Board.board[0][7], "black", 1)
-knight1b = Knight(Board.board[0][1], "black", 1)
-knight2b = Knight(Board.board[0][6], "black", 1)
-bishop1b = Bishop(Board.board[3][6], "black", 1)
-bishop2b = Bishop(Board.board[0][5], "black", 1)
+# knight2w = Knight(Board.board[7][6], "white", 2)
+# bishop1w = Bishop(Board.board[3][3], "white", 1)
+# bishop2w = Bishop(Board.board[7][5], "white", 1)
+# queenw = Queen(Board.board[7][3], "white", 1)
+# pawn1b = Pawn(Board.board[1][0], "black", 1)
+# pawn2b = Pawn(Board.board[1][2], "black", 1)
+# pawn4b = Pawn(Board.board[1][3], "black", 1)
+# pawn6b = Pawn(Board.board[1][5], "black", 1)
+# pawn7b = Pawn(Board.board[1][6], "black", 1)
+# pawn8b = Pawn(Board.board[1][7], "black", 1)
+# rook1b = Rook(Board.board[0][0], "black", 1)
+# rook2b = Rook(Board.board[0][7], "black", 1)
+# knight1b = Knight(Board.board[0][1], "black", 1)
+# knight2b = Knight(Board.board[0][6], "black", 1)
+# bishop1b = Bishop(Board.board[3][6], "black", 1)
+# bishop2b = Bishop(Board.board[0][5], "black", 1)
 
 # print(board1)
 # print(queenw.movement())
 
-KingW = King(Board.board[0][2], "white", 1)
-KingB = King(Board.board[0][4], "black", 1)
+# KingW = King(Board.board[3][7], "white", 1)
+# KingB = King(Board.board[0][4], "black", 1)
 print(board1)
-
+# print(Tile.tiles[("g", 5)].team)
+# print(Tile.tiles[("g", 5)].occupied)
+# print(Tile.tiles[("e", 5)].team)
+# print(Tile.tiles[("e", 5)].occupied)
+# print(rook1w.eat_or_move(Tile.tiles[("g", 5)]))
+# print(board1)
+# print(Tile.tiles[("g", 5)].team)
+# print(Tile.tiles[("g", 5)].occupied)
+# print(Tile.tiles[("e", 5)].team)
+# print(Tile.tiles[("e", 5)].occupied)
+# print(KingW.movement())
+# Board.play()
+# Board.play()
+Board.play()
 # print(KingW.movement())
 # print(KingW.actual_movement())
