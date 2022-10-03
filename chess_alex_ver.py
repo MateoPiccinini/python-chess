@@ -32,71 +32,107 @@ class Rook:
             return f"\033[2;37;40m[   ♖   ]\033[0;0m"
 
     def movement(self):
-        rook_x, rook_y = self.tile.coords
+        moves=[]
+        lateral_1=self.lateral_movement_1()
+        lateral_2=self.lateral_movement_2()
+        upwards=self.upwards_movement()
+        downwards=self.downwards_movement()
+        for i in lateral_1:
+            moves.append(i)
+        for i in lateral_2:
+            moves.append(i)
+        for i in upwards:
+            moves.append(i)
+        for i in downwards:
+            moves.append(i)
+        return moves
+    def lateral_movement_1(self):
+        available_spaces=[]
+        abc="abcdefgh"
+        x,y=self.tile.coords
+        i=True
+        wanted_x=abc.index(x)+1
+        if wanted_x == 8:
+            i=False
+        while i:
+            new_tile=Tile.tiles[abc[wanted_x],y]
+            if new_tile.occupied:
+                if new_tile.team==self.team:
+                    i=False
+                else:
+                    available_spaces.append(new_tile)
+                    i=False
+            else:
+                available_spaces.append(new_tile)
+                wanted_x+=1
+            if wanted_x > 8:
+                i = False
+        return available_spaces
+    def lateral_movement_2(self):
+        available_spaces=[]
+        abc="abcdefgh"
+        x,y=self.tile.coords
+        i=True
+        wanted_x=abc.index(x)-1
+        if wanted_x == -1:
+            i = False
+        while i:
+            new_tile=Tile.tiles[abc[wanted_x],y]
+            if new_tile.occupied:
+                if new_tile.team==self.team:
+                    i=False
+                else:
+                    available_spaces.append(new_tile)
+                    i=False
+            else:
+                available_spaces.append(new_tile)
+                wanted_x-=1
+            if wanted_x < 0:
+                i = False
+        return available_spaces
+    def upwards_movement(self):
         available_spaces = []
-        for row in Board.board:
-            for tile in row:
-                x, y = tile.coords
-                if rook_x == x and rook_y != y:
-                    available_spaces.append(tile)
-                if rook_x != x and rook_y == y:
-                    available_spaces.append(tile)
+        x, y = self.tile.coords
+        i = True
+        wanted_y= y+1
+        if wanted_y == 9:
+            i = False
+        while i:
+            new_tile = Tile.tiles[x, wanted_y]
+            if new_tile.occupied:
+                if new_tile.team == self.team:
+                    i = False
+                else:
+                    available_spaces.append(new_tile)
+                    i = False
+            elif new_tile.occupied==False:
+                available_spaces.append(new_tile)
+                wanted_y += 1
+            if wanted_y > 8:
+                i=False
+        return available_spaces
+    def downwards_movement(self):
+        available_spaces = []
+        x, y = self.tile.coords
+        i = True
+        wanted_y= y-1
+        if wanted_y == 0:
+            i = False
+        while i:
+            new_tile = Tile.tiles[x, wanted_y]
+            if new_tile.occupied:
+                if new_tile.team == self.team:
+                    i = False
+                else:
+                    available_spaces.append(new_tile)
+                    i = False
+            elif new_tile.occupied==False:
+                available_spaces.append(new_tile)
+                wanted_y -= 1
+                if wanted_y < 1:
+                    i = False
         return available_spaces
 
-    def cleanse(self):
-        available_spaces = set(self.movement())
-        actually_available_spaces = set(self.movement())
-        rook_x, rook_y = self.tile.coords
-        for i in available_spaces:
-            if i.occupied == True and i.team != self.team:
-                x, y = i.coords  # coordenadas del que tapa a la pieza
-                if y != rook_y:  # chequeo en que coordenada se encuentra el bloqueo
-                    if y > rook_y:  # chequeo si el bloqueo es arriba o abajo
-                        for tile in available_spaces:
-                            n, m = tile.coords
-                            if m > y:
-                                actually_available_spaces.remove(tile)
-                    elif y < rook_y:
-                        for tile in available_spaces:
-                            n, m = tile.coords
-                            if m < y:
-                                actually_available_spaces.remove(tile)
-                else:
-                    if x > rook_x:  # chequeo si el bloqueo es arriba o abajo
-                        for tile in available_spaces:
-                            n, m = tile.coords
-                            if n > x:
-                                actually_available_spaces.remove(tile)
-                    elif x < rook_x:
-                        for tile in available_spaces:
-                            n, m = tile.coords
-                            if n < x:
-                                actually_available_spaces.remove(tile)
-            if i.occupied == True and i.team == self.team: #si es del mismo equipo
-                x, y = i.coords  # coordenadas del que tapa a la pieza
-                if y != rook_y:  # chequeo en que coordenada se encuentra el bloqueo
-                    if y > rook_y:  # chequeo si el bloqueo es arriba o abajo
-                        for tile in available_spaces:
-                            n, m = tile.coords
-                            if m >= y:
-                                actually_available_spaces.remove(tile)
-                    elif y < rook_y:
-                        for tile in available_spaces:
-                            n, m = tile.coords
-                            if m <= y:
-                                actually_available_spaces.remove(tile)
-                else:
-                    if x > rook_x:  # chequeo si el bloqueo es arriba o abajo
-                        for tile in available_spaces:
-                            n, m = tile.coords
-                            if n >= x:
-                                actually_available_spaces.remove(tile)
-                    elif x < rook_x:
-                        for tile in available_spaces:
-                            n, m = tile.coords
-                            if n <= x:
-                                actually_available_spaces.remove(tile)
-        return actually_available_spaces
 
 
 class Knight:
@@ -305,69 +341,107 @@ class Queen:
             return f"\033[2;37;40m[   ♕   ]\033[0;0m"
 
     def straight_movement(self):
-        Queen_x, Queen_y = self.tile.coords
+        moves=[]
+        lateral_1=self.lateral_movement_1()
+        lateral_2=self.lateral_movement_2()
+        upwards=self.upwards_movement()
+        downwards=self.downwards_movement()
+        for i in lateral_1:
+            moves.append(i)
+        for i in lateral_2:
+            moves.append(i)
+        for i in upwards:
+            moves.append(i)
+        for i in downwards:
+            moves.append(i)
+        return moves
+    def lateral_movement_1(self):
+        available_spaces=[]
+        abc="abcdefgh"
+        x,y=self.tile.coords
+        i=True
+        wanted_x=abc.index(x)+1
+        if wanted_x == 8:
+            i=False
+        while i:
+            new_tile=Tile.tiles[abc[wanted_x],y]
+            if new_tile.occupied:
+                if new_tile.team==self.team:
+                    i=False
+                else:
+                    available_spaces.append(new_tile)
+                    i=False
+            else:
+                available_spaces.append(new_tile)
+                wanted_x+=1
+            if wanted_x > 8:
+                i = False
+        return available_spaces
+    def lateral_movement_2(self):
+        available_spaces=[]
+        abc="abcdefgh"
+        x,y=self.tile.coords
+        i=True
+        wanted_x=abc.index(x)-1
+        if wanted_x == -1:
+            i = False
+        while i:
+            new_tile=Tile.tiles[abc[wanted_x],y]
+            if new_tile.occupied:
+                if new_tile.team==self.team:
+                    i=False
+                else:
+                    available_spaces.append(new_tile)
+                    i=False
+            else:
+                available_spaces.append(new_tile)
+                wanted_x-=1
+            if wanted_x < 0:
+                i = False
+        return available_spaces
+    def upwards_movement(self):
         available_spaces = []
-        for row in Board.board:
-            for tile in row:
-                x, y = tile.coords
-                if (Queen_x == x and Queen_y != y) or (Queen_x != x and Queen_y == y):
-                    available_spaces.append(tile)
+        x, y = self.tile.coords
+        i = True
+        wanted_y= y+1
+        if wanted_y == 9:
+            i = False
+        while i:
+            new_tile = Tile.tiles[x, wanted_y]
+            if new_tile.occupied:
+                if new_tile.team == self.team:
+                    i = False
+                else:
+                    available_spaces.append(new_tile)
+                    i = False
+            elif new_tile.occupied==False:
+                available_spaces.append(new_tile)
+                wanted_y += 1
+            if wanted_y > 8:
+                i=False
+        return available_spaces
+    def downwards_movement(self):
+        available_spaces = []
+        x, y = self.tile.coords
+        i = True
+        wanted_y= y-1
+        if wanted_y == 0:
+            i = False
+        while i:
+            new_tile = Tile.tiles[x, wanted_y]
+            if new_tile.occupied:
+                if new_tile.team == self.team:
+                    i = False
+                else:
+                    available_spaces.append(new_tile)
+                    i = False
+            elif new_tile.occupied==False:
+                available_spaces.append(new_tile)
+                wanted_y -= 1
+                if wanted_y < 1:
+                    i = False
         return available_spaces
 
-    def cleanse_straight_movement(self):
-        available_spaces=self.straight_movement()
-        actually_available=self.straight_movement()
-        queen_x, queen_y = self.tile.coords
-        for i in available_spaces:
-            if i.occupied == True and i.team != self.team:
-                x, y = i.coords  # coordenadas del que tapa a la pieza
-                if y != queen_y:  # chequeo en que coordenada se encuentra el bloqueo
-                    if y > queen_y:  # chequeo si el bloqueo es arriba o abajo
-                        for tile in available_spaces:
-                            n, m = tile.coords
-                            if m > y:
-                                actually_available.remove(tile)
-                    elif y < queen_y:
-                        for tile in available_spaces:
-                            n, m = tile.coords
-                            if m < y:
-                                actually_available.remove(tile)
-                else:
-                    if x > queen_x:  # chequeo si el bloqueo es arriba o abajo
-                        for tile in available_spaces:
-                            n, m = tile.coords
-                            if n > x:
-                                actually_available.remove(tile)
-                    elif x < queen_x:
-                        for tile in available_spaces:
-                            n, m = tile.coords
-                            if n < x:
-                                actually_available.remove(tile)
-            if i.occupied == True and i.team == self.team:
-                x, y = i.coords  # coordenadas del que tapa a la pieza
-                if y != queen_y:  # chequeo en que coordenada se encuentra el bloqueo
-                    if y > queen_y:  # chequeo si el bloqueo es arriba o abajo
-                        for tile in available_spaces:
-                            n, m = tile.coords
-                            if m >= y:
-                                actually_available.remove(tile)
-                    elif y < queen_y:
-                        for tile in available_spaces:
-                            n, m = tile.coords
-                            if m <= y:
-                                actually_available.remove(tile)
-                else:
-                    if x > queen_x:  # chequeo si el bloqueo es arriba o abajo
-                        for tile in available_spaces:
-                            n, m = tile.coords
-                            if n >= x:
-                                actually_available.remove(tile)
-                    elif x < queen_x:
-                        for tile in available_spaces:
-                            n, m = tile.coords
-                            if n <= x:
-                                actually_available.remove(tile)
-        return actually_available
 
     def diagonal_movement(self):
         abc = "0abcdefgh"
@@ -449,7 +523,7 @@ class Queen:
     def movement(self):
         available_spaces = []
         diagonal_spaces = self.diagonal_movement()
-        straight_spaces = self.cleanse_straight_movement()
+        straight_spaces = self.straight_movement()
         for i in diagonal_spaces:
             available_spaces.append(i)
         for i in straight_spaces:
@@ -530,7 +604,7 @@ pawn8w = Pawn(Board.board[6][7], "white", 1)
 rook2w = Rook(Board.board[7][7], "white", 1)
 knight1w = Knight(Board.board[7][1], "white", 1)
 knight2w = Knight(Board.board[7][6], "white", 1)
-bishop1w = Bishop(Board.board[4][5], "white", 1)
+bishop1w = Bishop(Board.board[3][5], "white", 1)
 bishop2w = Bishop(Board.board[4][7], "white", 1)
 queenw = Queen(Board.board[4][2], "white", 1)
 pawn1b = Pawn(Board.board[1][0], "black", 1)
@@ -546,7 +620,7 @@ knight2b = Knight(Board.board[0][6], "black", 1)
 bishop1b = Bishop(Board.board[4][6], "black", 1)
 bishop2b = Bishop(Board.board[0][5], "black", 1)
 print(board1)
-print(pawn6b.available_spaces())
+print(queenw.movement())
 # print(bishop2b.available_spaces())
 # pawn1 = Pawn(Board.board[5][4], "white", 1)
 # pawn2 = Pawn(Board.board[6][2], "white", 1)
@@ -561,3 +635,4 @@ print(pawn6b.available_spaces())
 # print(knight1.cleanse())
 # print(pawn2.available_spaces())
 # print(bishop1.available_spaces())
+
