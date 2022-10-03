@@ -150,7 +150,7 @@ class Knight:
         else:
             return f"\033[2;37;40m[   ♘   ]\033[0;0m"
 
-    def movement(self):
+    def movement_uncleansed(self):
         x_knight, y_knight = self.tile.coords
         available_space = []
         abc = "abcdefgh"
@@ -166,9 +166,9 @@ class Knight:
                     available_space.append(tile)
         return available_space
 
-    def cleanse(self):
-        available_space = self.movement()
-        actually_available_space = self.movement()
+    def movement(self):
+        available_space = self.movement_uncleansed()
+        actually_available_space = self.movement_uncleansed()
         for tile in available_space:
             if tile.occupied and tile.team == self.team:
                 actually_available_space.remove(tile)
@@ -191,7 +191,7 @@ class Pawn:
         else:
             return f"\033[2;37;40m[   ♙   ]\033[0;0m"
 
-    def available_spaces(self) -> Set:
+    def movement(self) -> Set:
         abc = "abcdefgh"
         available_spaces = set()
         pawn_x, pawn_y = self.tile.coords
@@ -246,7 +246,7 @@ class Bishop:
         else:
             return f"\033[2;37;40m[   ♗   ]\033[0;0m"
 
-    def available_spaces(self) -> list:
+    def movement(self) -> list:
         abc = "0abcdefgh"
         bishop_x, bishop_y = self.tile.coords
         available_spaces = []
@@ -541,29 +541,31 @@ class King:
         tile.team = team
         tile.piece = self
 
+    def __repr__(self):
+        return f"\033[2;30;47m[   K   ]\033[0;0m"
     def movement(self):
         King_x, King_y = self.tile.coords
         available_spaces = []
+        spaces=set()
+        color=self.team
         abc = "abcdefgh"
-        for row in Board.board:
-            for tile in row:
-                x, y = tile.coords
-                if (x == King_x + 1 or x == King_x - 1) and y == King_y:
-                    if tile.team == self.team:
-                        pass
-                    else:
-                        available_spaces.append(tile)
-                if x == King_x and (abc.index(y) == abc.index(King_y) - 1 or abc.index(y) == abc.index(King_y) + 1):
-                    if tile.team == self.team:
-                        pass
-                    else:
-                        available_spaces.append(tile)
-                if (x == King_x + 1 or x == King_x - 1) and (
-                        abc.index(y) == abc.index(King_y) - 1 or abc.index(y) == abc.index(King_y) + 1):
-                    if tile.team == self.team:
-                        pass
-                    else:
-                        available_spaces.append(tile)
+        x=abc.index(King_x)
+        available_spaces.append(Tile.tiles[abc[x-1],King_y])
+        available_spaces.append(Tile.tiles[abc[x - 1], King_y-1])
+        available_spaces.append(Tile.tiles[abc[x - 1], King_y+1])
+        available_spaces.append(Tile.tiles[abc[x], King_y+1])
+        available_spaces.append(Tile.tiles[abc[x], King_y-1])
+        available_spaces.append(Tile.tiles[abc[x + 1], King_y])
+        available_spaces.append(Tile.tiles[abc[x + 1], King_y-1])
+        available_spaces.append(Tile.tiles[abc[x + 1], King_y+1])
+        for i in available_spaces:
+            if i.occupied==False:
+                spaces.add(i)
+        not_available=Board.threatened_spaces(color)
+        actually_available=spaces.difference(not_available)
+        return actually_available
+
+
 
 
 class Board:
@@ -584,12 +586,25 @@ class Board:
             board = board + f"\n{row}"
         return board
 
-    def threatened_spaces(self,color):
+
+    @staticmethod
+    def threatened_spaces(color):
         threats=[]
         for row in Board.board:
             for tile in row:
-                if tile.team==color:
-                    pass
+                if tile.occupied:
+                    if tile.team==color:
+                        pass
+                    else:
+                        piece_threats=tile.piece.movement()
+                        for i in piece_threats:
+                            threats.append(i)
+        empty_threats=[]
+        for i in threats:
+            if i.occupied==False:
+                empty_threats.append(i)
+        return set(empty_threats)
+
 
 
 board1 = Board()
@@ -619,8 +634,9 @@ knight1b = Knight(Board.board[0][1], "black", 1)
 knight2b = Knight(Board.board[0][6], "black", 1)
 bishop1b = Bishop(Board.board[4][6], "black", 1)
 bishop2b = Bishop(Board.board[0][5], "black", 1)
+kingb= King(Board.board[5][3],"white",1)
 print(board1)
-print(queenw.movement())
+print(kingb.movement())
 # print(bishop2b.available_spaces())
 # pawn1 = Pawn(Board.board[5][4], "white", 1)
 # pawn2 = Pawn(Board.board[6][2], "white", 1)
