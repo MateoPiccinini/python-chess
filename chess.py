@@ -747,6 +747,8 @@ class Board:
         a -= 1
         for i in range(8):
             row.append((Tile(x_coords[i], a, None, False)))
+    white_king_check=False
+    black_king_check=False
 
     def __init__(self):
         pass
@@ -789,11 +791,15 @@ class Board:
         return set(threats)
 
     def block_movement_while_in_check(self):
-        pass
-        # deberiamos de guardar en algun lado que pieza en particular esta poniendo en jaque al rey, así podemos
-        # hacer que se pueda salir de jaques no solo moviendo al rey si no que tambien bloqueando a la pieza que
-        # esta poniendo en jaque. Entonces lo que hariamos es que si el King.check == True, available spaces de las
-        # piezas fuera interseccion con la pieza que esta poniendo en jaque, y nada más.
+        for row in Board.board:
+            for tile in row:
+                if tile.occupied:
+                    if tile.piece.tag=="k" and tile.piece.color=="black":
+                        if tile.piece.check:
+                            black_king_check=True
+                    elif tile.piece.tag=="k" and tile.piece.color=="white":
+                        if tile.piece.check
+                            white_king_check=True
 
 
 board1 = Board()
