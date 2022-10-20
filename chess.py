@@ -790,6 +790,17 @@ class Board:
                             threats.append(i)
         return set(threats)
 
+    @staticmethod
+    def check_path(color):
+        threats=Board.threatened_space(color)
+        #se tienen que guardar las lineas de ataque de las piezas que estan poniendo en jaque al rey.
+        #entonces el movimiento de las piezas que no son el rey se veria limitado por una intersection
+        #entre los sets de las lineas de ataque de las piezas poniendo en jaque.
+        #la linea de ataque es distinto al movimiento de la pieza que ataca
+        #EL PRINCIPAL PROBLEMA QUE ENCUENTRO ES COMO ACCEDER AL REY Y SUS COORDENADAS SIN TENER QUE BARRER
+        #EL BOARD
+
+
     def block_movement_while_in_check(self):
         for row in Board.board:
             for tile in row:
@@ -798,7 +809,7 @@ class Board:
                         if tile.piece.check:
                             black_king_check=True
                     elif tile.piece.tag=="k" and tile.piece.color=="white":
-                        if tile.piece.check
+                        if tile.piece.check:
                             white_king_check=True
 
 
