@@ -46,6 +46,7 @@ class Rook:
             moves.append(i)
         for i in self.downwards_movement():
             moves.append(i)
+        moves.append(self.tile)
         return moves
 
     def movement(self) -> list:
@@ -53,21 +54,36 @@ class Rook:
 
     def eat_or_move(self, new_tile):
         self.movement()
-        print(self.available_moves)
-        if new_tile in self.movement():
-            self.tile.team = None
-            self.tile.occupied = False
-            self.tile.piece = None
-            self.tile.tag = None
-            if new_tile.piece is not None:
-                new_tile.piece.tile = None
-            new_tile.piece = self
-            new_tile.team = self.team
-            new_tile.occupied = True
-            new_tile.tag = self.tag
-            self.tile = new_tile
+        if Board.king_check:
+            if new_tile in set(self.movement()).intersection(Board.check_path(self.team)):
+                self.tile.team = None
+                self.tile.occupied = False
+                self.tile.piece = None
+                self.tile.tag = None
+                if new_tile.piece is not None:
+                    new_tile.piece.tile = None
+                new_tile.piece = self
+                new_tile.team = self.team
+                new_tile.occupied = True
+                new_tile.tag = self.tag
+                self.tile = new_tile
+            else:
+                print(f"{self.tag} can't move towards {new_tile.coords} tile because King remains in Check")
         else:
-            print(f"{self.tag} can't move towards {new_tile.coords} tile")
+            if new_tile in self.movement():
+                self.tile.team = None
+                self.tile.occupied = False
+                self.tile.piece = None
+                self.tile.tag = None
+                if new_tile.piece is not None:
+                    new_tile.piece.tile = None
+                new_tile.piece = self
+                new_tile.team = self.team
+                new_tile.occupied = True
+                new_tile.tag = self.tag
+                self.tile = new_tile
+            else:
+                print(f"{self.tag} can't move towards {new_tile.coords} tile")
 
     def lateral_movement_1(self) -> list:
 
@@ -86,7 +102,7 @@ class Rook:
             else:
                 available_spaces.append(new_tile)
                 wanted_x += 1
-            if wanted_x > 8:
+            if wanted_x == 8:
                 i = False
         return available_spaces
 
@@ -182,6 +198,7 @@ class Knight:
                         abc.index(x) == abc.index(x_knight) + 1 or abc.index(x) == abc.index(
                     x_knight) - 1):  # movimiento vertical
                     available_space.append(tile)
+        available_space.append(self.tile)
         return available_space
 
     def movement(self) -> list:
@@ -194,22 +211,36 @@ class Knight:
 
     def eat_or_move(self, new_tile):
         self.movement()
-        print(self.movement())
-        if new_tile in self.movement():
-            self.tile.team = None
-            self.tile.occupied = False
-            self.tile.piece = None
-            self.tile.tag = None
-            if new_tile.piece is not None:
-                new_tile.piece.tile = None
-            new_tile.piece = self
-            new_tile.team = self.team
-            new_tile.occupied = True
-            new_tile.tag = self.tag
-            self.tile = new_tile
+        if Board.king_check:
+            if new_tile in set(self.movement()).intersection(Board.check_path(self.team)):
+                self.tile.team = None
+                self.tile.occupied = False
+                self.tile.piece = None
+                self.tile.tag = None
+                if new_tile.piece is not None:
+                    new_tile.piece.tile = None
+                new_tile.piece = self
+                new_tile.team = self.team
+                new_tile.occupied = True
+                new_tile.tag = self.tag
+                self.tile = new_tile
+            else:
+                print(f"{self.tag} can't move towards {new_tile.coords} tile because King remains in Check")
         else:
-
-            print(f"{self.tag} can't move towards {new_tile.coords} tile")
+            if new_tile in self.movement():
+                self.tile.team = None
+                self.tile.occupied = False
+                self.tile.piece = None
+                self.tile.tag = None
+                if new_tile.piece is not None:
+                    new_tile.piece.tile = None
+                new_tile.piece = self
+                new_tile.team = self.team
+                new_tile.occupied = True
+                new_tile.tag = self.tag
+                self.tile = new_tile
+            else:
+                print(f"{self.tag} can't move towards {new_tile.coords} tile")
 
 
 class Pawn:
@@ -280,25 +311,41 @@ class Pawn:
                     if pawn_x == x and y == pawn_y - 1 and (
                             tile.team is None or tile.team == "black"):  # b Regular move
                         available_spaces.add(tile)
-        return available_spaces if available_spaces != set() else "No available spaces"
+        available_spaces.add(self.tile)
+        return available_spaces if list(available_spaces)[0]==self.tile else "No available spaces"
 
     def eat_or_move(self, new_tile):
         self.movement()
-        print(self.movement())
-        if new_tile in self.movement():
-            self.tile.team = None
-            self.tile.occupied = False
-            self.tile.piece = None
-            self.tile.tag = None
-            if new_tile.piece is not None:
-                new_tile.piece.tile = None
-            new_tile.piece = self
-            new_tile.team = self.team
-            new_tile.occupied = True
-            new_tile.tag = self.tag
-            self.tile = new_tile
+        if Board.king_check:
+            if new_tile in set(self.movement()).intersection(Board.check_path(self.team)):
+                self.tile.team = None
+                self.tile.occupied = False
+                self.tile.piece = None
+                self.tile.tag = None
+                if new_tile.piece is not None:
+                    new_tile.piece.tile = None
+                new_tile.piece = self
+                new_tile.team = self.team
+                new_tile.occupied = True
+                new_tile.tag = self.tag
+                self.tile = new_tile
+            else:
+                print(f"{self.tag} can't move towards {new_tile.coords} tile because King remains in Check")
         else:
-            print(f"{self.tag} can't move towards {new_tile.coords} tile")
+            if new_tile in self.movement():
+                self.tile.team = None
+                self.tile.occupied = False
+                self.tile.piece = None
+                self.tile.tag = None
+                if new_tile.piece is not None:
+                    new_tile.piece.tile = None
+                new_tile.piece = self
+                new_tile.team = self.team
+                new_tile.occupied = True
+                new_tile.tag = self.tag
+                self.tile = new_tile
+            else:
+                print(f"{self.tag} can't move towards {new_tile.coords} tile")
 
 
 class Bishop:
@@ -364,6 +411,7 @@ class Bishop:
                 if abc.index(x) == abc.index(bishop_x) + 1 and y == bishop_y - 1:  # Spaces in bottom right axis
                     for spaces in self.r_bot_axis(abc.index(x), y):
                         available_spaces.append(spaces)
+        available_spaces.append(self.tile)
         return available_spaces
 
     def l_top_axis(self, x: int, y: int, available_spaces=None) -> list:  # Spaces in top left axis
@@ -436,21 +484,36 @@ class Bishop:
 
     def eat_or_move(self, new_tile):
         self.movement()
-        print(self.movement())
-        if new_tile in self.movement():
-            self.tile.team = None
-            self.tile.occupied = False
-            self.tile.piece = None
-            self.tile.tag = None
-            if new_tile.piece is not None:
-                new_tile.piece.tile = None
-            new_tile.piece = self
-            new_tile.team = self.team
-            new_tile.occupied = True
-            new_tile.tag = self.tag
-            self.tile = new_tile
+        if Board.king_check:
+            if new_tile in set(self.movement()).intersection(Board.check_path(self.team)):
+                self.tile.team = None
+                self.tile.occupied = False
+                self.tile.piece = None
+                self.tile.tag = None
+                if new_tile.piece is not None:
+                    new_tile.piece.tile = None
+                new_tile.piece = self
+                new_tile.team = self.team
+                new_tile.occupied = True
+                new_tile.tag = self.tag
+                self.tile = new_tile
+            else:
+                print(f"{self.tag} can't move towards {new_tile.coords} tile because King remains in Check")
         else:
-            print(f"{self.tag} can't move towards {new_tile.coords} tile")
+            if new_tile in self.movement():
+                self.tile.team = None
+                self.tile.occupied = False
+                self.tile.piece = None
+                self.tile.tag = None
+                if new_tile.piece is not None:
+                    new_tile.piece.tile = None
+                new_tile.piece = self
+                new_tile.team = self.team
+                new_tile.occupied = True
+                new_tile.tag = self.tag
+                self.tile = new_tile
+            else:
+                print(f"{self.tag} can't move towards {new_tile.coords} tile")
 
 
 class Queen:
@@ -463,7 +526,7 @@ class Queen:
         tile.occupied = True
         tile.team = team
         tile.piece = self
-        self.tag = f"q "
+        self.tag = f"q1"
         tile.tag = self.tag
 
     def __repr__(self):
@@ -508,7 +571,7 @@ class Queen:
             else:
                 available_spaces.append(new_tile)
                 wanted_x += 1
-            if wanted_x > 8:
+            if wanted_x == 8:
                 i = False
         return available_spaces
 
@@ -679,6 +742,7 @@ class Queen:
             threatened.append(i)
         for i in straight_spaces:
             threatened.append(i)
+        threatened.append(self.tile)
         return threatened
 
     def movement(self):
@@ -686,21 +750,36 @@ class Queen:
 
     def eat_or_move(self, new_tile):
         self.movement()
-        print(self.movement())
-        if new_tile in self.movement():
-            self.tile.team = None
-            self.tile.occupied = False
-            self.tile.piece = None
-            self.tile.tag = None
-            if new_tile.piece is not None:
-                new_tile.piece.tile = None
-            new_tile.piece = self
-            new_tile.team = self.team
-            new_tile.occupied = True
-            new_tile.tag = self.tag
-            self.tile = new_tile
+        if Board.king_check:
+            if new_tile in set(self.movement()).intersection(Board.check_path(self.team)):
+                self.tile.team = None
+                self.tile.occupied = False
+                self.tile.piece = None
+                self.tile.tag = None
+                if new_tile.piece is not None:
+                    new_tile.piece.tile = None
+                new_tile.piece = self
+                new_tile.team = self.team
+                new_tile.occupied = True
+                new_tile.tag = self.tag
+                self.tile = new_tile
+            else:
+                print(f"{self.tag} can't move towards {new_tile.coords} tile because King remains in Check")
         else:
-            print(f"{self.tag} can't move towards {new_tile.coords} tile")
+            if new_tile in self.movement():
+                self.tile.team = None
+                self.tile.occupied = False
+                self.tile.piece = None
+                self.tile.tag = None
+                if new_tile.piece is not None:
+                    new_tile.piece.tile = None
+                new_tile.piece = self
+                new_tile.team = self.team
+                new_tile.occupied = True
+                new_tile.tag = self.tag
+                self.tile = new_tile
+            else:
+                print(f"{self.tag} can't move towards {new_tile.coords} tile")
 
 
 class King:
@@ -714,7 +793,7 @@ class King:
         tile.team = team
         tile.piece = self
         self.check = False
-        self.tag = "k"
+        self.tag = "k1"
         tile.tag = self.tag
 
     def __repr__(self):
@@ -748,30 +827,272 @@ class King:
         not_team = set([x for x in self.threatened_spaces() if x.team != self.team])
         not_available = Board.threatened_space(self.team)
         actually_available = not_team.difference(not_available)
+        for i in not_available:
+            if i.occupied:
+                if i in not_team: #y ademas esa pieza no esta en el threteaned pieces de otra pieza
+                    actually_available.add(i)
         return actually_available
 
     def check_checks(self):
         threatened = Board.threatened_space(self.team)
         if self.tile in threatened:
             self.check = True
+        else:
+            self.check = False
 
     def eat_or_move(self, new_tile):
         self.movement()
-        print(self.movement())
-        if new_tile in self.movement():
-            self.tile.team = None
-            self.tile.occupied = False
-            self.tile.piece = None
-            self.tile.tag = None
-            if new_tile.piece is not None:
-                new_tile.piece.tile = None
-            new_tile.piece = self
-            new_tile.team = self.team
-            new_tile.occupied = True
-            new_tile.tag = self.tag
-            self.tile = new_tile
+        if Board.king_check:
+            if new_tile in set(self.movement()).intersection(Board.check_path(self.team)):
+                self.tile.team = None
+                self.tile.occupied = False
+                self.tile.piece = None
+                self.tile.tag = None
+                if new_tile.piece is not None:
+                    new_tile.piece.tile = None
+                new_tile.piece = self
+                new_tile.team = self.team
+                new_tile.occupied = True
+                new_tile.tag = self.tag
+                self.tile = new_tile
+            else:
+                print(f"{self.tag} can't move towards {new_tile.coords} tile because King remains in Check")
         else:
-            print(f"{self.tag} can't move towards {new_tile.coords} tile")
+            if new_tile in self.movement():
+                self.tile.team = None
+                self.tile.occupied = False
+                self.tile.piece = None
+                self.tile.tag = None
+                if new_tile.piece is not None:
+                    new_tile.piece.tile = None
+                new_tile.piece = self
+                new_tile.team = self.team
+                new_tile.occupied = True
+                new_tile.tag = self.tag
+                self.tile = new_tile
+            else:
+                print(f"{self.tag} can't move towards {new_tile.coords} tile")
+
+    def straight_movement(self):
+        moves = []
+        lateral_1 = self.lateral_movement_1()
+        lateral_2 = self.lateral_movement_2()
+        upwards = self.upwards_movement()
+        downwards = self.downwards_movement()
+        for i in lateral_1:
+            moves.append(i)
+        for i in lateral_2:
+            moves.append(i)
+        for i in upwards:
+            moves.append(i)
+        for i in downwards:
+            moves.append(i)
+        return moves
+
+    def lateral_movement_1(self):
+        available_spaces = []
+        abc = "abcdefgh"
+        x, y = self.tile.coords
+        i = True
+        wanted_x = abc.index(x) + 1
+        if wanted_x == 8:
+            i = False
+        while i:
+            new_tile = Tile.tiles[abc[wanted_x], y]
+            if new_tile.occupied:
+                if new_tile.team == self.team:
+                    available_spaces.append(new_tile)
+                    i = False
+                else:
+                    available_spaces.append(new_tile)
+                    i = False
+            else:
+                available_spaces.append(new_tile)
+                wanted_x += 1
+            if wanted_x == 8:
+                i = False
+        return available_spaces
+
+    def lateral_movement_2(self):
+        available_spaces = []
+        abc = "abcdefgh"
+        x, y = self.tile.coords
+        i = True
+        wanted_x = abc.index(x) - 1
+        if wanted_x == -1:
+            i = False
+        while i:
+            new_tile = Tile.tiles[abc[wanted_x], y]
+            if new_tile.occupied:
+                if new_tile.team == self.team:
+                    available_spaces.append(new_tile)
+                    i = False
+                else:
+                    available_spaces.append(new_tile)
+                    i = False
+            else:
+                available_spaces.append(new_tile)
+                wanted_x -= 1
+            if wanted_x < 0:
+                i = False
+        return available_spaces
+
+    def upwards_movement(self):
+        available_spaces = []
+        x, y = self.tile.coords
+        i = True
+        wanted_y = y + 1
+        if wanted_y == 9:
+            i = False
+        while i:
+            new_tile = Tile.tiles[x, wanted_y]
+            if new_tile.occupied:
+                if new_tile.team == self.team:
+                    available_spaces.append(new_tile)
+                    i = False
+                else:
+                    available_spaces.append(new_tile)
+                    i = False
+            elif not new_tile.occupied:
+                available_spaces.append(new_tile)
+                wanted_y += 1
+            if wanted_y > 8:
+                i = False
+        return available_spaces
+
+    def downwards_movement(self):
+        available_spaces = []
+        x, y = self.tile.coords
+        i = True
+        wanted_y = y - 1
+        if wanted_y == 0:
+            i = False
+        while i:
+            new_tile = Tile.tiles[x, wanted_y]
+            if new_tile.occupied:
+                if new_tile.team == self.team:
+                    available_spaces.append(new_tile)
+                    i = False
+                else:
+                    available_spaces.append(new_tile)
+                    i = False
+            elif not new_tile.occupied:
+                available_spaces.append(new_tile)
+                wanted_y -= 1
+                if wanted_y < 1:
+                    i = False
+        return available_spaces
+
+    def diagonal_movement(self):
+        abc = "0abcdefgh"
+        King_x, King_y = self.tile.coords
+        available_spaces = []
+        for row in Board.board:
+            for tile in row:
+                x, y = tile.coords
+                if abc.index(x) == abc.index(King_x) - 1 and y == King_y + 1:  # Spaces in top left axis
+                    for spaces in self.l_top_axis(abc.index(x), y):
+                        available_spaces.append(spaces)
+                if abc.index(x) == abc.index(King_x) - 1 and y == King_y - 1:  # Spaces in bottom left axis
+                    for spaces in self.l_bot_axis(abc.index(x), y):
+                        available_spaces.append(spaces)
+                if abc.index(x) == abc.index(King_x) + 1 and y == King_y + 1:  # Spaces in top right axis
+                    for spaces in self.r_top_axis(abc.index(x), y):
+                        available_spaces.append(spaces)
+                if abc.index(x) == abc.index(King_x) + 1 and y == King_y - 1:  # Spaces in bottom right axis
+                    for spaces in self.r_bot_axis(abc.index(x), y):
+                        available_spaces.append(spaces)
+        return available_spaces
+
+    def l_top_axis(self, x: int, y: int, available_spaces=None) -> list:  # Spaces in top left axis
+        if available_spaces is None:
+            available_spaces = []
+        abc = "0abcdefgh"
+        if x == 0 or y == 9:
+            return available_spaces
+        tile = Tile.tiles[(abc[x], y)]
+        if tile.occupied == True and tile.team == self.team:
+            available_spaces.append(tile)
+            return available_spaces
+        elif tile.occupied == True and tile.team != self.team:
+            available_spaces.append(tile)
+            return available_spaces
+        else:
+            available_spaces.append(tile)
+            return self.l_top_axis(x - 1, y + 1, available_spaces)
+
+    def l_bot_axis(self, x: int, y: int, available_spaces=None) -> list:  # Spaces in top left axis
+        if available_spaces is None:
+            available_spaces = []
+        abc = "0abcdefgh"
+        if x == 0 or y == 0:
+            return available_spaces
+        tile = Tile.tiles[(abc[x], y)]
+        if tile.occupied == True and tile.team == self.team:
+            available_spaces.append(tile)
+            return available_spaces
+        elif tile.occupied == True and tile.team != self.team:
+            available_spaces.append(tile)
+            return available_spaces
+        else:
+            available_spaces.append(tile)
+            return self.l_bot_axis(x - 1, y - 1, available_spaces)
+
+    def r_top_axis(self, x: int, y: int, available_spaces=None) -> list:
+        if available_spaces is None:
+            available_spaces = []
+        abc = "0abcdefgh"
+        if x > 8 or y > 8:
+            return available_spaces
+        tile = Tile.tiles[(abc[x], y)]
+        if tile.occupied == True and tile.team == self.team:
+            available_spaces.append(tile)
+            return available_spaces
+        elif tile.occupied == True and tile.team != self.team:
+            available_spaces.append(tile)
+            return available_spaces
+        else:
+            available_spaces.append(tile)
+            return self.r_top_axis(x + 1, y + 1, available_spaces)
+
+    def r_bot_axis(self, x: int, y: int, available_spaces=None) -> list:
+        if available_spaces is None:
+            available_spaces = []
+        abc = "0abcdefgh"
+        if x > 8 or y == 0:
+            return available_spaces
+        tile = Tile.tiles[(abc[x], y)]
+        if tile.occupied == True and tile.team == self.team:
+            available_spaces.append(tile)
+            return available_spaces
+        elif tile.occupied == True and tile.team != self.team:
+            available_spaces.append(tile)
+            return available_spaces
+        else:
+            available_spaces.append(tile)
+            return self.r_bot_axis(x + 1, y - 1, available_spaces)
+
+    def vision(self):
+        counter=0
+        vision = set()
+        threatening_pieces= []
+        diagonal_spaces = self.diagonal_movement()
+        straight_spaces = self.straight_movement()
+        for i in diagonal_spaces:
+            if i.occupied and i.piece.team!=self.team:
+                if self.tile in i.piece.movement():
+                    threatening_pieces.append((i,"diagonal"))
+                    vision=vision.union((set(i.piece.threatened_spaces()).intersection(set(diagonal_spaces))))
+        for i in straight_spaces:
+            if i.occupied and i.piece.team != self.team:
+                if self.tile in i.piece.movement():
+                    threatening_pieces.append((i,"straight"))
+                    vision=vision.union((set(i.piece.threatened_spaces()).intersection(set(straight_spaces))))
+        print(len(threatening_pieces))
+        if len(threatening_pieces)<=1:
+            return vision
+        return set()
+
 
 
 class Board:
@@ -782,8 +1103,7 @@ class Board:
         a -= 1
         for i in range(8):
             row.append((Tile(x_coords[i], a, None, False)))
-    white_king_check=False
-    black_king_check=False
+    king_check=False
 
     def __init__(self):
         pass
@@ -798,19 +1118,22 @@ class Board:
         color = "white"
         check_mate = False
         while not check_mate:
-            letter, number, to, x, y = tuple(input(f"{color} move:"))
-            place = Tile.tiles[(x, int(y))]
-            for tile in Tile.tiles:
-                this_tile = Tile.tiles[tile]
-                piece = Tile.tiles[tile].piece
-                if f"{letter}{number}" == this_tile.tag and this_tile.team == color:
-                    piece.eat_or_move(place)
-                    if not this_tile.occupied:
-                        print(self)
-                        if color == "white":
-                            color = "black"
-                        else:
-                            color = "white"
+            Board.block_movement_while_in_check(color)
+            check_mate = Board.checkmate(color)
+            if not check_mate:
+                letter, number, to, x, y = tuple(input(f"{color} move:"))
+                place = Tile.tiles[(x, int(y))]
+                for tile in Tile.tiles:
+                    this_tile = Tile.tiles[tile]
+                    piece = Tile.tiles[tile].piece
+                    if f"{letter}{number}" == this_tile.tag and this_tile.team == color:
+                        piece.eat_or_move(place)
+                        if not this_tile.occupied:
+                            print(self)
+                            if color == "white":
+                                color = "black"
+                            else:
+                                color = "white"
 
     @staticmethod
     def threatened_space(color):
@@ -825,64 +1148,129 @@ class Board:
         return set(threats)
 
     @staticmethod
-    def check_path(color):
-        threats=Board.threatened_space(color)
-        #se tienen que guardar las lineas de ataque de las piezas que estan poniendo en jaque al rey.
-        #entonces el movimiento de las piezas que no son el rey se veria limitado por una intersection
-        #entre los sets de las lineas de ataque de las piezas poniendo en jaque.
-        #la linea de ataque es distinto al movimiento de la pieza que ataca
-        #EL PRINCIPAL PROBLEMA QUE ENCUENTRO ES COMO ACCEDER AL REY Y SUS COORDENADAS SIN TENER QUE BARRER
-        #EL BOARD
-
-
-    def block_movement_while_in_check(self):
+    def check_path(color): #retorna la lista de moves que las piezas pueden hacer para bloquear el jaque
         for row in Board.board:
             for tile in row:
                 if tile.occupied:
-                    if tile.piece.tag=="k" and tile.piece.color=="black":
+                    if tile.piece.tag=="k1" and tile.piece.team==color:
+                        if len(set(tile.piece.vision()))==0:
+                            return tile.piece.movement()
+                        return set(tile.piece.vision())
+
+    @staticmethod
+    def block_movement_while_in_check(color): #activa el jaque en el Board
+        for row in Board.board:
+            for tile in row:
+                if tile.occupied:
+                    if tile.piece.tag=="k1" and tile.piece.team==color:
+                        tile.piece.check_checks()
                         if tile.piece.check:
-                            black_king_check=True
-                    elif tile.piece.tag=="k" and tile.piece.color=="white":
-                        if tile.piece.check:
-                            white_king_check=True
+                            Board.king_check=True
+                        else:
+                            Board.king_check=False
+    @staticmethod
+    def checkmate(color):
+        if Board.king_check:
+            if color == "white":
+                opposite = "black"
+            else:
+                opposite = "white"
+            checking_path = Board.check_path(color)
+            print(checking_path)
+            checked_team_available_moves = set(Board.threatened_space(opposite))
+            print(checked_team_available_moves)
+            can_checked_team_move = checking_path.intersection(checked_team_available_moves)
+            print(can_checked_team_move)
+            if len(can_checked_team_move) < 1:
+                print(f"{opposite} checkmates {color}")
+                return True
+            else:
+                counter=0
+                for row in Board.board:
+                    for tile in row:
+                        if tile.occupied:
+                            if tile.piece.tag!="k1" and tile.piece.team==color:
+                                if len(set(tile.piece.movement()).intersection(can_checked_team_move)) > 0:
+                                    counter=1
+                            if tile.piece.tag=="k1" and tile.piece.team==color:
+                                if len(set(tile.piece.movement()).intersection(can_checked_team_move))>0:
+                                    counter=1
+                print(counter)
+                if counter==0:
+                    print(f"{opposite} checkmates {color}")
+                    return True
+                if counter==1:
+                    print(f"{color} King is in check!")
+                    return False
+
+
+
 
 
 board1 = Board()
-pawn1w = Pawn(Board.board[6][0], "white", 1)
-pawn2w = Pawn(Board.board[6][1], "white", 2)
-pawn3w = Pawn(Board.board[6][2], "white", 3)
-pawn4w = Pawn(Board.board[6][3], "white", 4)
-pawn5w = Pawn(Board.board[6][4], "white", 5)
-pawn6w = Pawn(Board.board[6][5], "white", 6)
-pawn7w = Pawn(Board.board[6][6], "white", 7)
-pawn8w = Pawn(Board.board[6][7], "white", 8)
-rook1w = Rook(Board.board[7][0], "white", 1)
-rook2w = Rook(Board.board[7][7], "white", 2)
-knight1w = Knight(Board.board[7][1], "white", 1)
-knight2w = Knight(Board.board[7][6], "white", 2)
-bishop1w = Bishop(Board.board[7][2], "white", 1)
-bishop2w = Bishop(Board.board[7][5], "white", 2)
-queenw = Queen(Board.board[7][3], "white", 1)
-pawn1b = Pawn(Board.board[1][0], "black", 1)
-pawn2b = Pawn(Board.board[1][1], "black", 2)
-pawn3b = Pawn(Board.board[1][2], "black", 3)
-pawn4b = Pawn(Board.board[1][3], "black", 4)
-pawn5b = Pawn(Board.board[1][4], "black", 5)
-pawn6b = Pawn(Board.board[1][5], "black", 6)
-pawn7b = Pawn(Board.board[1][6], "black", 7)
-pawn8b = Pawn(Board.board[1][7], "black", 8)
-rook1b = Rook(Board.board[0][0], "black", 1)
-rook2b = Rook(Board.board[0][7], "black", 2)
-knight1b = Knight(Board.board[0][1], "black", 1)
-knight2b = Knight(Board.board[0][6], "black", 2)
-bishop1b = Bishop(Board.board[0][2], "black", 1)
-bishop2b = Bishop(Board.board[0][5], "black", 2)
+#pawn1w = Pawn(Board.board[6][0], "white", 1)
+#pawn2w = Pawn(Board.board[6][1], "white", 2)
+#pawn3w = Pawn(Board.board[2][6], "white", 3)
+#pawn4w = Pawn(Board.board[6][3], "white", 4)
+#pawn5w = Pawn(Board.board[6][4], "white", 5)
+#pawn6w = Pawn(Board.board[6][5], "white", 6)
+#pawn7w = Pawn(Board.board[6][6], "white", 7)
+#pawn8w = Pawn(Board.board[6][7], "white", 8)
+#rook1w = Rook(Board.board[7][0], "white", 1)
+#rook2w = Rook(Board.board[0][1], "white", 2)
+#knight1w = Knight(Board.board[7][1], "white", 1)
+#knight2w = Knight(Board.board[7][6], "white", 2)
+#bishop1w = Bishop(Board.board[7][2], "white", 1)
+#bishop2w = Bishop(Board.board[7][5], "white", 2)
+#queenw = Queen(Board.board[7][3], "white", 1)
+#pawn1b = Pawn(Board.board[1][0], "black", 1)
+#pawn2b = Pawn(Board.board[1][1], "black", 2)
+#pawn3b = Pawn(Board.board[1][2], "black", 3)
+#pawn4b = Pawn(Board.board[1][3], "black", 4)
+#pawn5b = Pawn(Board.board[1][4], "black", 5)
+#pawn6b = Pawn(Board.board[1][5], "black", 6)
+#pawn7b = Pawn(Board.board[1][6], "black", 7)
+#pawn8b = Pawn(Board.board[1][7], "black", 8)
+#rook1b = Rook(Board.board[5][5], "black", 1)
+#rook2b = Rook(Board.board[6][6], "black", 2)
+#knight1b = Knight(Board.board[0][1], "black", 1)
+#knight2b = Knight(Board.board[0][6], "black", 2)
+#bishop1b = Bishop(Board.board[1][4], "black", 1)
+#bishop2b = Bishop(Board.board[5][1], "black", 2)
 
 # print(board1)
 # print(queenw.movement())
 
-# KingW = King(Board.board[3][7], "white", 1)
-# KingB = King(Board.board[0][4], "black", 1)
+#checkmate_case_1: sucess
+#rook1b = Rook(Board.board[5][5], "black", 1)
+#rook2b = Rook(Board.board[6][6], "black", 2)
+#rook2w = Rook(Board.board[0][1], "white", 2)
+#KingW = King(Board.board[7][0], "white", 1)
+#KingB = King(Board.board[1][7], "black", 1)
+
+#check_case_2: failed
+#rook2b = Rook(Board.board[0][4], "black", 2)
+#rook2w = Rook(Board.board[3][1], "white", 2)
+#KingW = King(Board.board[5][4], "white", 1)
+#KingB = King(Board.board[1][7], "black", 1)
+#bishop1b = Bishop(Board.board[1][4], "black", 1)
+
+#check_case_3: success
+#KingW = King(Board.board[5][4], "white", 1)
+#KingB = King(Board.board[1][7], "black", 1)
+#knight1b = Knight(Board.board[0][1], "black", 1)
+#knight2b = Knight(Board.board[0][6], "black", 2)
+
+#check_mate_case_4: failed
+#KingW = King(Board.board[5][3], "white", 1)
+#KingB = King(Board.board[5][6], "black", 1)
+#queenb = Queen(Board.board[0][5], "black", 1)
+
+
+
+
+#KingW = King(Board.board[7][0], "white", 1)
+#KingB = King(Board.board[1][7], "black", 1)
 print(board1)
 # print(Tile.tiles[("g", 5)].team)
 # print(Tile.tiles[("g", 5)].occupied)
