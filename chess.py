@@ -829,8 +829,19 @@ class King:
         actually_available = not_team.difference(not_available)
         for i in not_available:
             if i.occupied:
-                if i in not_team: #y ademas esa pieza no esta en el threteaned pieces de otra pieza
-                    actually_available.add(i)
+                if i in not_team:
+                    counter=1
+                    for row in Board.board:
+                        for tile in row:
+                            if tile.occupied:
+                                if tile.team!=self.team:
+                                    if i in tile.piece.threatened_spaces() and i!=tile:
+                                        print(tile.piece.threatened_spaces())
+                                        counter=0
+                    if counter==0:
+                        pass
+                    if counter==1:
+                        actually_available.add(i)
         return actually_available
 
     def check_checks(self):
@@ -1082,13 +1093,18 @@ class King:
             if i.occupied and i.piece.team!=self.team:
                 if self.tile in i.piece.movement():
                     threatening_pieces.append((i,"diagonal"))
-                    vision=vision.union((set(i.piece.threatened_spaces()).intersection(set(diagonal_spaces))))
+                    if i.tag == "q1":
+                        vision = vision.union((set(i.piece.diagonal_movement()))).intersection(set(diagonal_spaces))
+                    else:
+                        vision = vision.union((set(i.piece.threatened_spaces()).intersection(set(diagonal_spaces))))
         for i in straight_spaces:
             if i.occupied and i.piece.team != self.team:
                 if self.tile in i.piece.movement():
                     threatening_pieces.append((i,"straight"))
-                    vision=vision.union((set(i.piece.threatened_spaces()).intersection(set(straight_spaces))))
-        print(len(threatening_pieces))
+                    if i.tag=="q1":
+                        vision=vision.union((set(i.piece.straight_movement()))).intersection(set(straight_spaces))
+                    else:
+                        vision=vision.union((set(i.piece.threatened_spaces()).intersection(set(straight_spaces))))
         if len(threatening_pieces)<=1:
             return vision
         return set()
@@ -1148,14 +1164,24 @@ class Board:
         return set(threats)
 
     @staticmethod
+    def movable_space(color):
+        movable = []
+        for row in Board.board:
+            for tile in row:
+                if tile.occupied:
+                    if tile.team != color:
+                        piece_moves = tile.piece.movement()
+                        for i in piece_moves:
+                            movable.append(i)
+        return set(movable)
+
+    @staticmethod
     def check_path(color): #retorna la lista de moves que las piezas pueden hacer para bloquear el jaque
         for row in Board.board:
             for tile in row:
                 if tile.occupied:
                     if tile.piece.tag=="k1" and tile.piece.team==color:
-                        if len(set(tile.piece.vision()))==0:
-                            return tile.piece.movement()
-                        return set(tile.piece.vision())
+                        return set(tile.piece.vision()).union(set(tile.piece.movement()))
 
     @staticmethod
     def block_movement_while_in_check(color): #activa el jaque en el Board
@@ -1176,11 +1202,8 @@ class Board:
             else:
                 opposite = "white"
             checking_path = Board.check_path(color)
-            print(checking_path)
-            checked_team_available_moves = set(Board.threatened_space(opposite))
-            print(checked_team_available_moves)
+            checked_team_available_moves = set(Board.movable_space(opposite))
             can_checked_team_move = checking_path.intersection(checked_team_available_moves)
-            print(can_checked_team_move)
             if len(can_checked_team_move) < 1:
                 print(f"{opposite} checkmates {color}")
                 return True
@@ -1189,13 +1212,9 @@ class Board:
                 for row in Board.board:
                     for tile in row:
                         if tile.occupied:
-                            if tile.piece.tag!="k1" and tile.piece.team==color:
-                                if len(set(tile.piece.movement()).intersection(can_checked_team_move)) > 0:
-                                    counter=1
                             if tile.piece.tag=="k1" and tile.piece.team==color:
-                                if len(set(tile.piece.movement()).intersection(can_checked_team_move))>0:
+                                if len(can_checked_team_move)>0 or len(tile.piece.movement())>0 :
                                     counter=1
-                print(counter)
                 if counter==0:
                     print(f"{opposite} checkmates {color}")
                     return True
@@ -1260,12 +1279,20 @@ board1 = Board()
 #KingB = King(Board.board[1][7], "black", 1)
 #knight1b = Knight(Board.board[0][1], "black", 1)
 #knight2b = Knight(Board.board[0][6], "black", 2)
+#rook1w = Rook(Board.board[1][4], "white", 1)
+#queenw = Queen(Board.board[0][5], "white", 1)
 
 #check_mate_case_4: failed
 #KingW = King(Board.board[5][3], "white", 1)
 #KingB = King(Board.board[5][6], "black", 1)
 #queenb = Queen(Board.board[0][5], "black", 1)
+#rook1w = Rook(Board.board[1][4], "white", 1)
 
+#check_mate_case_5: sucess
+rook2w = Rook(Board.board[3][1], "white", 2)
+KingW = King(Board.board[5][2], "white", 1)
+KingB = King(Board.board[1][7], "black", 1)
+bishop1b = Bishop(Board.board[1][4], "black", 1)
 
 
 
