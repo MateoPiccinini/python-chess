@@ -312,7 +312,7 @@ class Pawn:
                             tile.team is None or tile.team == "black"):  # b Regular move
                         available_spaces.add(tile)
         available_spaces.add(self.tile)
-        return available_spaces if list(available_spaces)[0]==self.tile else "No available spaces"
+        return available_spaces
 
     def eat_or_move(self, new_tile):
         self.movement()
@@ -836,7 +836,6 @@ class King:
                             if tile.occupied:
                                 if tile.team!=self.team:
                                     if i in tile.piece.threatened_spaces() and i!=tile:
-                                        print(tile.piece.threatened_spaces())
                                         counter=0
                     if counter==0:
                         pass
@@ -1227,35 +1226,38 @@ class Board:
 
 
 board1 = Board()
-#pawn1w = Pawn(Board.board[6][0], "white", 1)
-#pawn2w = Pawn(Board.board[6][1], "white", 2)
-#pawn3w = Pawn(Board.board[2][6], "white", 3)
-#pawn4w = Pawn(Board.board[6][3], "white", 4)
-#pawn5w = Pawn(Board.board[6][4], "white", 5)
-#pawn6w = Pawn(Board.board[6][5], "white", 6)
-#pawn7w = Pawn(Board.board[6][6], "white", 7)
-#pawn8w = Pawn(Board.board[6][7], "white", 8)
-#rook1w = Rook(Board.board[7][0], "white", 1)
-#rook2w = Rook(Board.board[0][1], "white", 2)
-#knight1w = Knight(Board.board[7][1], "white", 1)
-#knight2w = Knight(Board.board[7][6], "white", 2)
-#bishop1w = Bishop(Board.board[7][2], "white", 1)
-#bishop2w = Bishop(Board.board[7][5], "white", 2)
-#queenw = Queen(Board.board[7][3], "white", 1)
-#pawn1b = Pawn(Board.board[1][0], "black", 1)
-#pawn2b = Pawn(Board.board[1][1], "black", 2)
-#pawn3b = Pawn(Board.board[1][2], "black", 3)
-#pawn4b = Pawn(Board.board[1][3], "black", 4)
-#pawn5b = Pawn(Board.board[1][4], "black", 5)
-#pawn6b = Pawn(Board.board[1][5], "black", 6)
-#pawn7b = Pawn(Board.board[1][6], "black", 7)
-#pawn8b = Pawn(Board.board[1][7], "black", 8)
-#rook1b = Rook(Board.board[5][5], "black", 1)
-#rook2b = Rook(Board.board[6][6], "black", 2)
-#knight1b = Knight(Board.board[0][1], "black", 1)
-#knight2b = Knight(Board.board[0][6], "black", 2)
-#bishop1b = Bishop(Board.board[1][4], "black", 1)
-#bishop2b = Bishop(Board.board[5][1], "black", 2)
+pawn1w = Pawn(Board.board[6][0], "white", 1)
+pawn2w = Pawn(Board.board[6][1], "white", 2)
+pawn3w = Pawn(Board.board[6][2], "white", 3)
+pawn4w = Pawn(Board.board[6][3], "white", 4)
+pawn5w = Pawn(Board.board[6][4], "white", 5)
+pawn6w = Pawn(Board.board[6][5], "white", 6)
+pawn7w = Pawn(Board.board[6][6], "white", 7)
+pawn8w = Pawn(Board.board[6][7], "white", 8)
+rook1w = Rook(Board.board[7][0], "white", 1)
+rook2w = Rook(Board.board[7][7], "white", 2)
+knight1w = Knight(Board.board[7][1], "white", 1)
+knight2w = Knight(Board.board[7][6], "white", 2)
+bishop1w = Bishop(Board.board[7][2], "white", 1)
+bishop2w = Bishop(Board.board[7][5], "white", 2)
+queenw = Queen(Board.board[7][3], "white", 1)
+kingw=King(Board.board[7][4],"white",1)
+pawn1b = Pawn(Board.board[1][0], "black", 1)
+pawn2b = Pawn(Board.board[1][1], "black", 2)
+pawn3b = Pawn(Board.board[1][2], "black", 3)
+pawn4b = Pawn(Board.board[1][3], "black", 4)
+pawn5b = Pawn(Board.board[1][4], "black", 5)
+pawn6b = Pawn(Board.board[1][5], "black", 6)
+pawn7b = Pawn(Board.board[1][6], "black", 7)
+pawn8b = Pawn(Board.board[1][7], "black", 8)
+rook1b = Rook(Board.board[0][0], "black", 1)
+rook2b = Rook(Board.board[0][7], "black", 2)
+knight1b = Knight(Board.board[0][1], "black", 1)
+knight2b = Knight(Board.board[0][6], "black", 2)
+bishop1b = Bishop(Board.board[0][5], "black", 1)
+bishop2b = Bishop(Board.board[0][2], "black", 2)
+queenb=Queen(Board.board[0][3],"black",1)
+kingb=King(Board.board[0][4],"black",1)
 
 # print(board1)
 # print(queenw.movement())
@@ -1289,10 +1291,10 @@ board1 = Board()
 #rook1w = Rook(Board.board[1][4], "white", 1)
 
 #check_mate_case_5: sucess
-rook2w = Rook(Board.board[3][1], "white", 2)
-KingW = King(Board.board[5][2], "white", 1)
-KingB = King(Board.board[1][7], "black", 1)
-bishop1b = Bishop(Board.board[1][4], "black", 1)
+#rook2w = Rook(Board.board[3][1], "white", 2)
+#KingW = King(Board.board[5][2], "white", 1)
+#KingB = King(Board.board[1][7], "black", 1)
+#bishop1b = Bishop(Board.board[1][4], "black", 1)
 
 
 
